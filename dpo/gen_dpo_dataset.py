@@ -233,7 +233,7 @@ def build_dataset(n_total: int, stage1_share: float) -> List[Dict[str, str]]:
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--n", type=int, default=20000, help="total number of pairs")
+    ap.add_argument("--n", type=int, default=200000, help="total number of pairs")
     ap.add_argument(
         "--stage1_share",
         type=float,
