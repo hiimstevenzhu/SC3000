@@ -65,7 +65,6 @@ def gen_mul() -> Tuple[str, int, str]:
 
 
 def gen_div() -> Tuple[str, int, str]:
-    # make divisible pairs to keep integers
     y = rand_int(1, 99)
     ans = rand_int(1, 99)
     x = y * ans
@@ -90,7 +89,7 @@ def gen_eq_ax_eq_b() -> Tuple[str, int, str]:
     b = a * x
     prompt = f"{a}*x={b}, x=?"
     ans = x
-    reason = f"{a}*{x}={b}, so x={b}//{a}={x}"
+    reason = f"x = {b}/{a} = {x}"
     return prompt, ans, reason
 
 
@@ -102,7 +101,88 @@ def gen_eq_ax_plus_b_eq_c() -> Tuple[str, int, str]:
     c = a * x + b
     prompt = f"{a}*x+{b}={c}, x=?"
     ans = x
-    reason = f"{a}*{x}+{b}={c}, so x=({c}-{b})//{a}={x}"
+    reason = f"x = ({c}-{b})/{a} = {x}"
+    return prompt, ans, reason
+
+
+def gen_eq_c_minus_x_eq_b():
+    # c - x = b  -> x = c - b
+    b = rand_int(-50, 50)
+    x = rand_int(-50, 50)
+    c = b + x
+    prompt = f"{c}-x={b}, x=?"
+    ans = c - b  # equals x
+    reason = f"{c}-{x}={b}, so x={c}-{b}={ans}"
+    return prompt, ans, reason
+
+def gen_eq_x_plus_a_eq_b():
+    # x + a = b -> x = b - a
+    a = rand_int(-30, 30)
+    x = rand_int(-50, 50)
+    b = x + a
+    prompt = f"x+{a}={b}, x=?"
+    ans = b - a
+    reason = f"{ans}+{a}={b}, so x={b}-{a}={ans}"
+    return prompt, ans, reason
+
+def gen_eq_x_minus_a_eq_b():
+    # x - a = b -> x = b + a
+    a = rand_int(-30, 30)
+    x = rand_int(-50, 50)
+    b = x - a
+    prompt = f"x-{a}={b}, x=?"
+    ans = b + a
+    reason = f"{ans}-{a}={b}, so x={b}+{a}={ans}"
+    return prompt, ans, reason
+
+def gen_eq_a_over_x_eq_b():
+    b = rand_int(1, 12)
+    x = rand_int(1, 50)
+    a = b * x
+    prompt = f"{a}/x={b}, x=?"
+    ans = x
+    # Reason: keep simple, avoid // and avoid embedding wrong patterns
+    reason = f"x = {a}/{b} = {x}"
+    return prompt, ans, reason
+
+def gen_eq_x_times_a_eq_b() -> Tuple[str, int, str]:
+    # x * a = b  -> x = b / a  (integer)
+    a = rand_int(1, 12)
+    x = rand_int(-50, 50)
+    b = a * x
+    prompt = f"x*{a}={b}, x=?"
+    ans = x
+    reason = f"x = {b}/{a} = {x}"
+    return prompt, ans, reason
+
+def gen_eq_x_over_a_eq_b() -> Tuple[str, int, str]:
+    # x / a = b  -> x = a * b
+    a = rand_int(1, 12)
+    b = rand_int(-30, 30)
+    x = a * b
+    prompt = f"x/{a}={b}, x=?"
+    ans = x
+    reason = f"x = {a}*{b} = {x}"
+    return prompt, ans, reason
+
+def gen_eq_a_plus_x_eq_b() -> Tuple[str, int, str]:
+    # a + x = b  -> x = b - a
+    a = rand_int(-30, 30)
+    x = rand_int(-50, 50)
+    b = a + x
+    prompt = f"{a}+x={b}, x=?"
+    ans = b - a
+    reason = f"x = {b}-{a} = {ans}"
+    return prompt, ans, reason
+
+def gen_eq_a_minus_x_eq_b() -> Tuple[str, int, str]:
+    # a - x = b  -> x = a - b
+    a = rand_int(-30, 30)
+    x = rand_int(-50, 50)
+    b = a - x
+    prompt = f"{a}-x={b}, x=?"
+    ans = a - b
+    reason = f"x = {a}-{b} = {ans}"
     return prompt, ans, reason
 
 
@@ -115,15 +195,27 @@ def gen_word_sum() -> Tuple[str, int, str]:
 
 
 GENS = [
-    ("add", gen_add, 0.22),
-    ("sub", gen_sub, 0.18),
-    ("mul", gen_mul, 0.18),
-    ("div", gen_div, 0.12),
-    ("paren", gen_paren_mix, 0.10),
-    ("eq1", gen_eq_ax_eq_b, 0.10),
-    ("eq2", gen_eq_ax_plus_b_eq_c, 0.07),
-    ("word", gen_word_sum, 0.03),
+    ("add",        gen_add,                 0.11),
+    ("sub",        gen_sub,                 0.11),
+    ("mul",        gen_mul,                 0.11),
+    ("div",        gen_div,                 0.11),
+
+    ("eq1",        gen_eq_ax_eq_b,          0.06),  # a*x=b
+    ("eq1b",       gen_eq_x_times_a_eq_b,   0.06),  # x*a=b
+
+    ("eq2",        gen_eq_ax_plus_b_eq_c,   0.06),  # a*x+b=c
+
+    ("a_over_x",   gen_eq_a_over_x_eq_b,    0.06),  # a/x=b
+    ("x_over_a",   gen_eq_x_over_a_eq_b,    0.06),  # x/a=b
+
+    ("c_minus_x",  gen_eq_c_minus_x_eq_b,   0.06),  # c - x = b
+    ("x_plus_a",   gen_eq_x_plus_a_eq_b,    0.05),  # x + a = b
+    ("a_plus_x",   gen_eq_a_plus_x_eq_b,    0.05),  # a + x = b
+    ("x_minus_a",  gen_eq_x_minus_a_eq_b,   0.05),  # x - a = b
+    ("a_minus_x",  gen_eq_a_minus_x_eq_b,   0.05),  # a - x = b
 ]
+
+
 # probs sum to 1.0
 
 
@@ -246,6 +338,8 @@ def main():
     args = ap.parse_args()
 
     data = build_dataset(args.n, args.stage1_share)
+
+    print(f"[debug] total: {len(data)}")
 
     # quick validation: ensure negatives are not trivially equal to positives
     bad = sum(1 for ex in data if ex["negative"] == ex["positive"])
