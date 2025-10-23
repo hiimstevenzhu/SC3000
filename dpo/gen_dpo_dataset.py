@@ -45,7 +45,7 @@ def gen_add() -> Tuple[str, int, str]:
     digit_range = choice([(10, 99), (100, 999)])
     
     x, y = rand_int(*digit_range), rand_int(*digit_range)
-    ans = x + y
+    ans = x + y #did this to fix addition range as the pairs were not balanced
     
     prompt = f"{x}+{y}=?"
     reason = f"{x}+{y} equals {ans}"
