@@ -16,6 +16,7 @@ import json
 import random
 import argparse
 from typing import Tuple, Dict, List
+from random import choice
 
 RNG = random.Random(42)
 
@@ -41,8 +42,11 @@ def coin(p: float) -> bool:
 
 
 def gen_add() -> Tuple[str, int, str]:
-    x, y = rand_int(1, 999), rand_int(1, 999)
+    digit_range = choice([(10, 99), (100, 999)])
+    
+    x, y = rand_int(*digit_range), rand_int(*digit_range)
     ans = x + y
+    
     prompt = f"{x}+{y}=?"
     reason = f"{x}+{y} equals {ans}"
     return prompt, ans, reason
@@ -325,7 +329,7 @@ def build_dataset(n_total: int, stage1_share: float) -> List[Dict[str, str]]:
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--n", type=int, default=200000, help="total number of pairs")
+    ap.add_argument("--n", type=int, default=400000, help="total number of pairs")
     ap.add_argument(
         "--stage1_share",
         type=float,
